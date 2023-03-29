@@ -28,18 +28,23 @@ const LoginPage = ({ setUserData }) => {
     console.log('user: ', user);
   };
 
-  const register = async () => {
-    console.log('registering...');
-    await signUp(email, password);
-    const initialUserData = {
-      name: userName,
-      email: email.toLowerCase(),
-      currentState: 'out',
-      // history: [],
-    };
-    await createUserData(initialUserData);
-    setUserData(initialUserData);
-  };
+    const register = async () => {
+      console.log('registering...');
+      if (password !== passwordConfirm) {
+        console.log('A két jelszó nem egyezik meg!');
+        window.alert("Jelszók nem egyeznek");
+        return;
+      }
+      await signUp(email, password);
+      const initialUserData = {
+        name: userName,
+        email: email.toLowerCase(),
+        currentState: 'out',
+        // history: [],
+      };
+      await createUserData(initialUserData);
+      setUserData(initialUserData);
+    };    
 
   return (
     <View style={styles.container}>
