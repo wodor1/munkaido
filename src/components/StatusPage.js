@@ -1,14 +1,31 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Switch, Image } from 'react-native';
 
 import { signOutUser } from '../auth';
 import { addHistory, updateUserState } from '../database';
 
 const StatusPage = ({ navigation: { navigate }, userData, setUserData }) => {
+  const [link, setLink] = useState(''); // Új state a link tárolására
   const handleLogout = async () => {
     await signOutUser();
     setUserData(null);
   };
+
+  async function generateImage() {
+    try {
+      const response = await fetch('https://inspirobot.me/api?generate=true');
+      if (response.ok) {
+        const imageUrl = await response.text();
+        console.log('Kép linkje:', imageUrl);
+        setLink(imageUrl);
+        return imageUrl;
+      } else {
+        console.error('Hiba a kép lekérdezése közben:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Hiba történt a kép lekérdezése közben:', error);
+    }
+  };  
 
   const toggleSwitch = () => {
     let newState = '';
@@ -20,7 +37,17 @@ const StatusPage = ({ navigation: { navigate }, userData, setUserData }) => {
     setUserData({ ...userData, currentState: newState });
     updateUserState(userData.email, newState);
     addHistory(userData.email, newState);
-  };
+  
+    // Új kép generálása a kapcsoló állapotának megváltoztatásakor
+    generateImage();
+  };  
+
+  useEffect(() => {
+    if (link === '') {
+      generateImage();
+    }
+  }, [link, generateImage]);
+  
 
   return (
     <View style={styles.container}>
@@ -43,6 +70,9 @@ const StatusPage = ({ navigation: { navigate }, userData, setUserData }) => {
       <TouchableOpacity onPress={() => navigate('Napló')} style={[styles.button, styles.shadow]}>
         <Text style={styles.buttonText}>Napló megtekintése</Text>
       </TouchableOpacity>
+      <View>
+      <Image style={styles.image} source={{ uri: link }} />
+      </View>
     </View>
   );
 };
@@ -96,6 +126,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: -2, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
+  },
+  image: {
+    width: 400,
+    height: 400,
+    resizeMode: 'contain',
   },
 });
 

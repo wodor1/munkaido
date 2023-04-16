@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { loginStatus } from './auth';
 import InnerPage from './components/InnerPage';
 import LoginPage from './components/LoginPage';
+import StatusPage from './components/StatusPage';
 import { getUserDataByEmail } from './database';
 
 const App = () => {
@@ -27,7 +28,7 @@ const App = () => {
         console.log(error);
         setLoading(false);
       });
-  }, []);
+  }, []);  
 
   if (userData === null) {
     return loading ? null : <LoginPage setUserData={setUserData} />;

@@ -9,7 +9,7 @@ import {
   Button,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import { resetPassword } from '../auth.js'; // importáljuk az auth.js-ben található resetPassword függvényt
 import { signIn, signUp } from '../auth';
 import { getUserDataByEmail, createUserData } from '../database';
 
@@ -27,6 +27,20 @@ const LoginPage = ({ setUserData }) => {
     setUserData(userData);
     console.log('user: ', user);
   };
+
+   const validateEmail = (email) => {
+      // regex minta az email cím ellenőrzéséhez
+      const regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\\.,;:\s@\"]+\.)+[^<>()[\]\\.,;:\s@\"]{2,})$/;
+      return regex.test(email);
+    };
+
+    const handleForgotPassword = () => {
+      if (validateEmail(email)) {
+        resetPassword(email); // hívjuk meg a resetPassword függvényt az email változóval
+      } else {
+        console.log('Invalid email address');
+      }
+    };
 
     const register = async () => {
       console.log('registering...');
@@ -107,6 +121,21 @@ const LoginPage = ({ setUserData }) => {
               onChangeText={setPasswordConfirm}
             />
           )}
+          <View style={{ alignItems: 'flex-end', margin: 15}}>
+            {!isSignUpActive && (
+              <TouchableOpacity onPress={() => {
+                if (!email) {
+                  window.alert('Töltsd ki az email címedet, majd nyomd meg újra ezt a gombot');
+                } else if (validateEmail(email)) {
+                  resetPassword(email);
+                } else {
+                  window.alert('Az email cím formátuma nem megfelelő');
+                }
+              }}>
+                <Text style={[styles.toggleButtonText, !isSignUpActive && styles.activeText], { fontStyle: 'italic', fontSize: 12 }}>Elfelejtett jelszó</Text>
+              </TouchableOpacity>
+            )}
+          </View>
           {isSignUpActive ? (
             <Button title="Regisztráció" onPress={register} />
           ) : (
