@@ -73,7 +73,7 @@ const StatusPage = ({ navigation: { navigate }, userData, setUserData }) => {
         <Text style={styles.buttonText}>Napló megtekintése</Text>
       </TouchableOpacity>
       <View>
-      <Image style={styles.image} source={{ uri: link }} />
+      {link !== '' && <Image style={styles.image} source={{ uri: link }} />}
       </View>
     </View>
   );
