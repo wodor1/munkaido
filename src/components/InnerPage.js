@@ -9,16 +9,34 @@ import SettingsPage from './SettingsPage'; // Új import
 const Stack = createNativeStackNavigator();
 
 const InnerPage = ({ userData, setUserData }) => {
+  const toggleSwitch = (prevState) => {
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      state: prevState === 'in' ? 'out' : 'in',
+    }));
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Munkaidő Nyilvántartó">
           {navigatorProps => (
-            <StatusPage {...navigatorProps} setUserData={setUserData} userData={userData} />
+            <StatusPage
+              {...navigatorProps}
+              setUserData={setUserData}
+              userData={userData}
+              toggleSwitch={toggleSwitch} // Hozzáadva itt
+            />
           )}
         </Stack.Screen>
         <Stack.Screen name="Napló">
-          {navigatorProps => <HistoryPage {...navigatorProps} userData={userData} />}
+          {navigatorProps => (
+            <HistoryPage
+              {...navigatorProps}
+              userData={userData}
+              toggleSwitch={toggleSwitch} // Hozzáadva itt
+            />
+          )}
         </Stack.Screen>
         {/* Új navigációs elem: Beállítások */}
         <Stack.Screen name="Beállítások">

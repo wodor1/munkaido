@@ -6,7 +6,7 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { app } from './database';
 const auth = getAuth(app);
 
